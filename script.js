@@ -8,8 +8,8 @@ const highScoreElement = document.querySelector("#high-score");
 const scoreElement = document.querySelector("#score");
 const timeElement = document.querySelector("#time");
 
-const blockHeight = 50;
-const blockWidth = 50;
+const blockHeight = 40;
+const blockWidth = 40;
 
 let highScore = localStorage.getItem("highscore") || 0;
 let score = 0;
@@ -29,7 +29,7 @@ let food = {
 };
 
 const blocks = [];
-let snake = [{ x: 5, y: 5 }];
+let snake = [{ x: 2, y: 2 }];
 
 let direction = "down";
 
@@ -135,7 +135,7 @@ function restartGame() {
   timeElement.innerText = time;
   highScoreElement.innerText = highScore;
 
-  snake = [{ x: 5, y: 5 }];
+  snake = [{ x: 2, y: 2 }];
   food = {
     x: Math.floor(Math.random() * rows),
     y: Math.floor(Math.random() * cols),
