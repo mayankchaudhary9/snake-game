@@ -4,13 +4,25 @@ const restartButton = document.querySelector(".btn-restart");
 const modal = document.querySelector(".modal");
 const startGameModel = document.querySelector(".start-game");
 const gameOverModel = document.querySelector(".game-over");
+const highScoreElement = document.querySelector("#high-score");
+const scoreElement = document.querySelector("#score");
+const timeElement = document.querySelector("#time");
 
-const blockHeight = 80;
-const blockWidth = 80;
+const blockHeight = 50;
+const blockWidth = 50;
+
+let highScore = localStorage.getItem("highscore") || 0;
+let score = 0;
+let time = `00-00`;
+
+highScoreElement.innerText = highScore;
 
 const cols = Math.floor(board.clientWidth / blockWidth);
 const rows = Math.floor(board.clientHeight / blockHeight);
+
 let intervalId = null;
+let timerIntervalId = null;
+
 let food = {
   x: Math.floor(Math.random() * rows),
   y: Math.floor(Math.random() * cols),
@@ -26,7 +38,7 @@ for (let row = 0; row < rows; row++) {
     const block = document.createElement("div");
     block.classList.add("block");
     board.appendChild(block);
-    block.innerText = `${row}-${col}`;
+    // block.innerText = `${row}-${col}`;
 
     blocks[`${row}-${col}`] = block;
   }
@@ -65,6 +77,13 @@ function render() {
     blocks[`${food.x}-${food.y}`].classList.add("food");
 
     snake.unshift(head);
+
+    score += 10;
+    scoreElement.innerText = score;
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem("highscore", highScore.toString());
+    }
   }
 
   snake.forEach((val) => {
@@ -84,20 +103,40 @@ startButton.addEventListener("click", () => {
   intervalId = setInterval(() => {
     render();
   }, 300);
+  timerIntervalId = setInterval(() => {
+    let [min, sec] = time.split("-").map(Number);
+
+    if (sec == 59) {
+      min += 1;
+      sec = 0;
+    } else {
+      sec += 1;
+    }
+
+    time = `${min}-${sec}`;
+    timeElement.innerText = time;
+  }, 1000);
 });
 
 restartButton.addEventListener("click", restartGame);
 
 function restartGame() {
-  //   blocks[`${food.x}-${food.y}`].classList.remove("food");
-  //   snake.forEach((val) => {
-  //     blocks[`${val.x}-${val.y}`].classList.remove("fill");
-  //   });
+  blocks[`${food.x}-${food.y}`].classList.remove("food");
+
+  snake.forEach((val) => {
+    blocks[`${val.x}-${val.y}`].classList.remove("fill");
+  });
   modal.style.display = "none";
   direction = "down";
+  score = 0;
+  time = `00-00`;
+
+  scoreElement.innerText = score;
+  timeElement.innerText = time;
+  highScoreElement.innerText = highScore;
 
   snake = [{ x: 5, y: 5 }];
-  let food = {
+  food = {
     x: Math.floor(Math.random() * rows),
     y: Math.floor(Math.random() * cols),
   };
